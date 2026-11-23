@@ -1,0 +1,42 @@
+# Demo experiment.
+#   python examples/demo/make_demo.py                               # stimuli + manifest
+#   python -m binaural_loc design  --config examples/demo/experiment.yaml # trial lists
+#   python -m binaural_loc serve   --config examples/demo/experiment.yaml
+#   python -m binaural_loc analyze --config examples/demo/experiment.yaml --by participant_id,condition
+title: Localization test (demo)
+sample_rate: 48000
+
+manifest: stimuli/manifest.csv     # relative to this file
+trial_lists: trial_lists
+results: results
+volume_reference: stimuli/reference.wav
+
+max_replays: 0                     # 0 = no replay
+
+rest:
+  min_seconds: 5                   # forced break between blocks
+
+response:
+  mode: azimuth_elevation          # azimuth_only | azimuth_elevation
+  externalization: rating          # off | rating
+  # externalization_labels: [...]  # optional, default 4 levels (inside head ... far outside)
+
+# Any participant-facing text can be overridden, e.g.:
+# text:
+#   end: 实验结束，谢谢！
+
+# Trial-list generation (python -m binaural_loc design). Mixed blocks: every main
+# block contains each main stimulus once, in random order.
+design:
+  seed: 20261014                   # master seed; each participant gets its own derived seed
+  n_participants: 4                # P01..P04 (or: participants: [P01, P02, ...])
+  repetitions: 2                   # main blocks = repetitions x blocks_per_repetition
+  blocks_per_repetition: 1
+  training:
+    filter: {condition: itd_ild}   # manifest column -> value(s); here the "ground truth" condition
+    n_trials: 4
+  # main:
+  #   filter: {condition: [itd_ild, ild_only]}   # default: all stimuli except catch
+  # catch:
+  #   filter: {condition: catch}
+  #   per_block: 2
